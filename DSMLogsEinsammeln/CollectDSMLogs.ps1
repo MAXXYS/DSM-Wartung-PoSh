@@ -21,22 +21,28 @@
 .COMPONENT
 #>
 
+param (
+    $Computername = $env:COMPUTERNAME,
+    $DaysBack = 1,
+    [switch]$Debug
+)
+
+# Process debug mode settings
+If ($Debug){
+    $DebugPreference = "Continue"
+    Write-Debug -Message "Debug Mode enabled"
+}else {$DebugPreference = "SilentlyContinue"}
+
 #region Functions
 function Get-DSMLogs {
     param(
         [string]$TargetPath = ("$env:UserProfile","Desktop" -join "\"),
-        [string]$Computername = $env:COMPUTERNAME,
-        [string]$DaysBack = "1",
+        [string]$Computername,
+        [string]$DaysBack,
         [switch]$Local,
-        [string]$Path = "C:\Program Files (x86)\Common Files\enteo\NiLogs",
-        [switch]$Debug
+        [string]$Path = "C:\Program Files (x86)\Common Files\enteo\NiLogs"
     )
-    # Process debug mode settings
-    If ($Debug){
-        $DebugPreference = "Continue"
-        Write-Debug -Message "Debug Mode enabled"
-    }else {$DebugPreference = "SilentlyContinue"}
-
+    
     # Variables
     $TempPath = "$env:LOCALAPPDATA\Temp\PrepareDSMLogs"
     $NiLogKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\NetSupport\NetInstall\LogFileSettings'
@@ -132,4 +138,4 @@ function Remove-TempFiles {
 }
 #endregion
 
-Get-DSMLogs -DaysBack 3 -Debug
+Get-DSMLogs -Computername $Computername -DaysBack $Daysback
